@@ -29,7 +29,7 @@ public class TechJobs {
         System.out.println("Welcome to LaunchCode's TechJobs App!");
 
         // Allow the user to search until they manually quit
-        while (true) {
+         while (true) {
 
             String actionChoice = getUserSelection("View jobs by:", actionChoices);
 
@@ -107,8 +107,26 @@ public class TechJobs {
 
         return choiceKeys[choiceIdx];
     }
+    [
 
-    // Print a list of jobs
+    {
+        "name": "Junior Data Analyst",
+            "employer": "Lockerdome",
+            "location": "Saint Louis",
+            "position type": "Data Scientist / Business Intelligence",
+            "core competency": "Statistical Analysis"
+    },
+    {
+        "name": "Junior Web Developer",
+            "employer": "Cozy",
+            "location": "Portland",
+            "position type": "Web - Back End",
+            "core competency": "Ruby"
+    },
+            ...
+            ]
+
+    // Print a list of jobs ****use code to pull key, and value.
     private static void printJobs(ArrayList<HashMap<String, String>> someJobs) {
 
         System.out.println("printJobs is not implemented yet");

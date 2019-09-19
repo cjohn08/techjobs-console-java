@@ -95,7 +95,7 @@ public class JobData {
         }
 
         try {
-
+            name,employer,location,position type,core competency
             // Open the CSV file and set up pull out column header info and records
             Reader in = new FileReader(DATA_FILE);
             CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);

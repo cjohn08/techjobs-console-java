@@ -114,7 +114,7 @@ public class JobData {
                 }
 
                 allJobs.add(newJob);
-            }
+            }n
 
             // flag the data as loaded, so we don't do it twice
             isDataLoaded = true;

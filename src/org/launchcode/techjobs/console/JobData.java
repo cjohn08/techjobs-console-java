@@ -1,43 +1,37 @@
-package org.launchcode.techjobs.console;
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+package org.launchcode.techjobs.console;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
-/**
- * Created by LaunchCode
- */
 public class JobData {
-
     private static final String DATA_FILE = "resources/job_data.csv";
     private static Boolean isDataLoaded = false;
-
     private static ArrayList<HashMap<String, String>> allJobs;
 
-    /**
-     * Fetch list of all values from loaded data,
-     * without duplicates, for a given column.
-     *
-     * @param field The column to retrieve values from
-     * @return List of all of the values of the given field
-     */
+    public JobData() {
+    }
+
     public static ArrayList<String> findAll(String field) {
-
-        // load data, if not already loaded
         loadData();
+        ArrayList<String> values = new ArrayList();
+        Iterator var2 = allJobs.iterator();
 
-        ArrayList<String> values = new ArrayList<>();
-
-        for (HashMap<String, String> row : allJobs) {
-            String aValue = row.get(field);
-
+        while(var2.hasNext()) {
+            HashMap<String, String> row = (HashMap)var2.next();
+            String aValue = (String)row.get(field);
             if (!values.contains(aValue)) {
                 values.add(aValue);
             }
@@ -47,36 +41,42 @@ public class JobData {
     }
 
     public static ArrayList<HashMap<String, String>> findAll() {
-
-        // load data, if not already loaded
         loadData();
-
         return allJobs;
     }
 
-    /**
-     * Returns results of search the jobs data by key/value, using
-     * inclusion of the search term.
-     *
-     * For example, searching for employer "Enterprise" will include results
-     * with "Enterprise Holdings, Inc".
-     *
-     * @param column   Column that should be searched.
-     * @param value Value of teh field to search for
-     * @return List of all jobs matching the criteria
-     */
-    public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
-
-        // load data, if not already loaded
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
         loadData();
+        ArrayList<HashMap<String, String>> jobs = new ArrayList();
+        Iterator var2 = allJobs.iterator();
 
-        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+        while(true) {
+            while(var2.hasNext()) {
+                HashMap<String, String> row = (HashMap)var2.next();
+                Iterator var4 = row.keySet().iterator();
 
-        for (HashMap<String, String> row : allJobs) {
+                while(var4.hasNext()) {
+                    String key = (String)var4.next();
+                    if (((String)row.get(key)).toLowerCase().contains(value.toLowerCase())) {
+                        jobs.add(row);
+                        break;
+                    }
+                }
+            }
 
-            String aValue = row.get(column);
+            return jobs;
+        }
+    }
 
-            if (aValue.contains(value)) {
+    public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
+        loadData();
+        ArrayList<HashMap<String, String>> jobs = new ArrayList();
+        Iterator var3 = allJobs.iterator();
+
+        while(var3.hasNext()) {
+            HashMap<String, String> row = (HashMap)var3.next();
+            String aValue = ((String)row.get(column)).toLowerCase();
+            if (aValue.contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
@@ -84,45 +84,37 @@ public class JobData {
         return jobs;
     }
 
-    /**
-     * Read in data from a CSV file and store it in a list
-     */
     private static void loadData() {
+        if (!isDataLoaded) {
+            try {
+                Reader in = new FileReader("resources/job_data.csv");
+                CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
+                List<CSVRecord> records = parser.getRecords();
+                Integer numberOfColumns = ((CSVRecord)records.get(0)).size();
+                String[] headers = (String[])parser.getHeaderMap().keySet().toArray(new String[numberOfColumns]);
+                allJobs = new ArrayList();
+                Iterator var5 = records.iterator();
 
-        // Only load data once
-        if (isDataLoaded) {
-            return;
-        }
+                while(var5.hasNext()) {
+                    CSVRecord record = (CSVRecord)var5.next();
+                    HashMap<String, String> newJob = new HashMap();
+                    String[] var8 = headers;
+                    int var9 = headers.length;
 
-        try {
-            name,employer,location,position type,core competency
-            // Open the CSV file and set up pull out column header info and records
-            Reader in = new FileReader(DATA_FILE);
-            CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
-            List<CSVRecord> records = parser.getRecords();
-            Integer numberOfColumns = records.get(0).size();
-            String[] headers = parser.getHeaderMap().keySet().toArray(new String[numberOfColumns]);
+                    for(int var10 = 0; var10 < var9; ++var10) {
+                        String headerLabel = var8[var10];
+                        newJob.put(headerLabel, record.get(headerLabel));
+                    }
 
-            allJobs = new ArrayList<>();
-
-            // Put the records into a more friendly format
-            for (CSVRecord record : records) {
-                HashMap<String, String> newJob = new HashMap<>();
-
-                for (String headerLabel : headers) {
-                    newJob.put(headerLabel, record.get(headerLabel));
+                    allJobs.add(newJob);
                 }
 
-                allJobs.add(newJob);
-            }sos
+                isDataLoaded = true;
+            } catch (IOException var12) {
+                System.out.println("Failed to load job data");
+                var12.printStackTrace();
+            }
 
-            // flag the data as loaded, so we don't do it twice
-            isDataLoaded = true;
-
-        } catch (IOException e) {
-            System.out.println("Failed to load job data");
-            e.printStackTrace();
         }
     }
-
 }
